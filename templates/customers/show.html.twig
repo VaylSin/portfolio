@@ -4,7 +4,6 @@
 
 {% block body %}
     <h1>Customers</h1>
-
     <table class="table">
         <tbody>
             <tr>
@@ -18,6 +17,14 @@
             <tr>
                 <th>Url_project</th>
                 <td>{{ customer.urlProject }}</td>
+            </tr>
+            <tr>
+                <th>Tags</th>
+                <td>
+                    {% for tag in customer.tags %}
+                        {{ tag.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
             </tr>
         </tbody>
     </table>

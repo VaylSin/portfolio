@@ -11,6 +11,7 @@
                 <th>Id</th>
                 <th>Name</th>
                 <th>Url_project</th>
+                <th>Tags</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -20,6 +21,11 @@
                 <td>{{ customer.id }}</td>
                 <td>{{ customer.name }}</td>
                 <td>{{ customer.urlProject }}</td>
+                <td>
+                    {% for tag in customer.tags %}
+                        {{ tag.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
                 <td>
                     <a href="{{ path('app_customers_show', {'id': customer.id}) }}">show</a>
                     <a href="{{ path('app_customers_edit', {'id': customer.id}) }}">edit</a>

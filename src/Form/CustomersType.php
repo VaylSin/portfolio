@@ -18,7 +18,7 @@ class CustomersType extends AbstractType
             ->add('url_project')
             ->add('tags', EntityType::class, [
                 'class' => Tag::class,
-                'choice_label' => 'id',
+                'choice_label' => 'name',
                 'multiple' => true,
             ])
         ;

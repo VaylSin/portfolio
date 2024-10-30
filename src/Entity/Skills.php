@@ -50,7 +50,10 @@ class Skills
 
         return $this;
     }
-
+    public function __construct()
+    {
+        $this->icon = 'default_icon.png';
+    }
     public function getIcon(): ?string
     {
         return $this->icon;

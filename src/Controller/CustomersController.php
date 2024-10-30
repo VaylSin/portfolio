@@ -28,15 +28,15 @@ final class CustomersController extends AbstractController {
     }
 
     #[Route('/new', name: 'app_customers_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, $manager): Response
+    public function new(Request $request,): Response
     {
         $customer = new Customers();
         $form = $this->createForm(CustomersType::class, $customer);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $manager->persist($customer);
-            $manager->flush();
+            $this->manager->persist($customer);
+            $this->manager->flush();
 
             return $this->redirectToRoute('app_customers_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -56,13 +56,13 @@ final class CustomersController extends AbstractController {
     }
 
     #[Route('/{id}/edit', name: 'app_customers_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Customers $customer, $manager): Response
+    public function edit(Request $request, Customers $customer, $id): Response
     {
         $form = $this->createForm(CustomersType::class, $customer);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $manager->flush();
+            $this->manager->flush();
 
             return $this->redirectToRoute('app_customers_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -73,13 +73,11 @@ final class CustomersController extends AbstractController {
         ]);
     }
 
-    #[Route('/{id}', name: 'app_customers_delete', methods: ['POST'])]
-    public function delete(Request $request, Customers $customer, $manager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$customer->getId(), $request->getPayload()->getString('_token'))) {
-            $manager->remove($customer);
-            $manager->flush();
-        }
+    #[Route('/{id}/delete', name: 'app_customers_delete', methods: ['POST'])]
+    public function delete(Request $request, Customers $customer, $id): Response {
+        $this->manager->remove($customer);
+        $this->manager->flush();
+
 
         return $this->redirectToRoute('app_customers_index', [], Response::HTTP_SEE_OTHER);
     }
