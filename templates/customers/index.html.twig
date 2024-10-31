@@ -19,11 +19,11 @@
         {% for customer in customers %}
             <tr>
                 <td>{{ customer.id }}</td>
-                <td>{{ customer.name }}</td>
+                <td>{{ customer.name | capitalize}}</td>
                 <td>{{ customer.urlProject }}</td>
                 <td>
                     {% for tag in customer.tags %}
-                        {{ tag.name }}{% if not loop.last %}, {% endif %}
+                        {{ tag.name |capitalize }}{% if not loop.last %}, {% endif %}
                     {% endfor %}
                 </td>
                 <td>
