@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/project')]
 final class ProjectController extends AbstractController
@@ -23,13 +24,36 @@ final class ProjectController extends AbstractController
     }
 
     #[Route('/new', name: 'app_project_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         $project = new Project();
         $form = $this->createForm(ProjectType::class, $project);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($form->get('images') as $imageForm) {
+                $imageFile = $imageForm->get('file')->getData();
+
+                if ($imageFile) {
+                    $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                    try {
+                        $imageFile->move(
+                            $this->getParameter('images_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // handle exception if something happens during file upload
+                    }
+
+                    $image = $imageForm->getData();
+                    $image->setUrl('/uploads/images/'.$newFilename);
+                    $project->addImage($image);
+                }
+            }
+
             $entityManager->persist($project);
             $entityManager->flush();
 
@@ -38,7 +62,7 @@ final class ProjectController extends AbstractController
 
         return $this->render('project/new.html.twig', [
             'project' => $project,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

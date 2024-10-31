@@ -27,9 +27,24 @@ class Customers
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'customers')]
     private Collection $tags;
 
+    /**
+     * @var Collection<int, Image>
+     */
+    #[ORM\ManyToMany(targetEntity: Image::class, inversedBy: 'customers')]
+    private Collection $Images;
+
+    /**
+     * @var Collection<int, Image>
+     */
+    #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'Customers')]
+    private Collection $images;
+
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+        $this->Images = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -84,5 +99,30 @@ class Customers
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Image>
+     */
+    public function getImages(): Collection
+    {
+        return $this->Images;
+    }
+
+    public function addImage(Image $image): static
+    {
+        if (!$this->Images->contains($image)) {
+            $this->Images->add($image);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): static
+    {
+        $this->Images->removeElement($image);
+
+        return $this;
+    }
+
 
 }
