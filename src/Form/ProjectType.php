@@ -2,12 +2,14 @@
 
 namespace App\Form;
 
-use App\Entity\Project;
 use App\Entity\Tag;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Project;
+use App\Form\ImageType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class ProjectType extends AbstractType
 {
@@ -27,7 +29,6 @@ class ProjectType extends AbstractType
                 'allow_delete' => true,
                 'by_reference' => false,
             ]);
-        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

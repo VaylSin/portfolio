@@ -15,6 +15,13 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 #[Route('/project')]
 final class ProjectController extends AbstractController
 {
+    private $manager;
+
+    public function __construct(EntityManagerInterface $manager)
+    {
+        $this->manager = $manager;
+    }
+
     #[Route(name: 'app_project_index', methods: ['GET'])]
     public function index(ProjectRepository $projectRepository): Response
     {
@@ -24,7 +31,7 @@ final class ProjectController extends AbstractController
     }
 
     #[Route('/new', name: 'app_project_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, SluggerInterface $slugger): Response
     {
         $project = new Project();
         $form = $this->createForm(ProjectType::class, $project);
@@ -51,11 +58,14 @@ final class ProjectController extends AbstractController
                     $image = $imageForm->getData();
                     $image->setUrl('/uploads/images/'.$newFilename);
                     $project->addImage($image);
+
+                    // Appeler explicitement persist sur chaque entité Image
+                    $this->manager->persist($image);
                 }
             }
 
-            $entityManager->persist($project);
-            $entityManager->flush();
+            $this->manager->persist($project);
+            $this->manager->flush();
 
             return $this->redirectToRoute('app_project_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -75,20 +85,54 @@ final class ProjectController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_project_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Project $project, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Project $project, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(ProjectType::class, $project);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            foreach ($form->get('images') as $imageForm) {
+                $imageFile = $imageForm->get('file')->getData();
+
+                if ($imageFile) {
+                    $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                    try {
+                        $imageFile->move(
+                            $this->getParameter('images_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // handle exception if something happens during file upload
+                    }
+
+                    // Supprimer l'ancien fichier si nécessaire
+                    if ($imageForm->getData()->getUrl()) {
+                        $oldFilePath = $this->getParameter('images_directory').'/'.basename($imageForm->getData()->getUrl());
+                        if (file_exists($oldFilePath)) {
+                            unlink($oldFilePath);
+                        }
+                    }
+
+                    $image = $imageForm->getData();
+                    $image->setUrl('/uploads/images/'.$newFilename);
+                    $project->addImage($image);
+
+                    // Appeler explicitement persist sur chaque entité Image
+                    $this->manager->persist($image);
+                }
+            }
+
+            $this->manager->flush();
 
             return $this->redirectToRoute('app_project_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('project/edit.html.twig', [
             'project' => $project,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -96,8 +140,17 @@ final class ProjectController extends AbstractController
     public function delete(Request $request, Project $project, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$project->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($project);
-            $entityManager->flush();
+            // Supprimer les images associées
+            foreach ($project->getImages() as $image) {
+                $oldFilePath = $this->getParameter('images_directory').'/'.basename($image->getUrl());
+                if (file_exists($oldFilePath)) {
+                    unlink($oldFilePath);
+                }
+                $this->manager->remove($image);
+            }
+
+            $this->manager->remove($project);
+            $this->manager->flush();
         }
 
         return $this->redirectToRoute('app_project_index', [], Response::HTTP_SEE_OTHER);

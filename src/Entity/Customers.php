@@ -30,20 +30,15 @@ class Customers
     /**
      * @var Collection<int, Image>
      */
-    #[ORM\ManyToMany(targetEntity: Image::class, inversedBy: 'customers')]
-    private Collection $Images;
-
-    /**
-     * @var Collection<int, Image>
-     */
-    #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'Customers')]
+    #[ORM\ManyToMany(targetEntity: Image::class, cascade: ['persist', 'remove'])]
     private Collection $images;
+
+
 
 
     public function __construct()
     {
         $this->tags = new ArrayCollection();
-        $this->Images = new ArrayCollection();
         $this->images = new ArrayCollection();
     }
 
@@ -105,13 +100,13 @@ class Customers
      */
     public function getImages(): Collection
     {
-        return $this->Images;
+        return $this->images;
     }
 
     public function addImage(Image $image): static
     {
-        if (!$this->Images->contains($image)) {
-            $this->Images->add($image);
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
         }
 
         return $this;
@@ -119,10 +114,8 @@ class Customers
 
     public function removeImage(Image $image): static
     {
-        $this->Images->removeElement($image);
+        $this->images->removeElement($image);
 
         return $this;
     }
-
-
 }

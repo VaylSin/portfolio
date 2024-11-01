@@ -6,6 +6,7 @@
     <h1>Customers</h1>
     <table class="table">
         <tbody>
+
             <tr>
                 <th>Id</th>
                 <td>{{ customer.id }}</td>
@@ -23,6 +24,14 @@
                 <td>
                     {% for tag in customer.tags %}
                         {{ tag.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <td>Images</td>
+                <td>
+                    {% for image in customer.images %}
+                        <img style="display:inline;max-width:20rem; margin-right:0.5rem" src="{{ image.url }}" alt="{{image.Alt}}" title="{{image.title}}">
                     {% endfor %}
                 </td>
             </tr>

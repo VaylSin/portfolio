@@ -19,7 +19,7 @@
         {% for image in images %}
             <tr>
                 <td>{{ image.id }}</td>
-                <td>{{ image.Url }}</td>
+                <td style="max-width: 300px;"><img src="{{ image.Url }}" alt="{{ image.Alt }}" title="{{ image.Title }}" style="max-width: 100%;"></td>
                 <td>{{ image.Alt }}</td>
                 <td>{{ image.Title }}</td>
                 <td>

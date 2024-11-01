@@ -2,17 +2,18 @@
 
 namespace App\Form;
 
-use App\Entity\Customers;
 use App\Entity\Tag;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Form\ImageType;
+use App\Entity\Customers;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
-class CustomersType extends AbstractType
-{
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
+class CustomersType extends AbstractType {
+    public function buildForm(FormBuilderInterface $builder, array $options): void {
+
         $builder
             ->add('name')
             ->add('url_project')
@@ -26,12 +27,13 @@ class CustomersType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
+                'prototype' => true,
+                'prototype_name' => '__name__',
             ]);
-        ;
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
-    {
+    public function configureOptions(OptionsResolver $resolver): void {
+        
         $resolver->setDefaults([
             'data_class' => Customers::class,
         ]);

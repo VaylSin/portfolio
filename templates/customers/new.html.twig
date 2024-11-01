@@ -1,11 +1,64 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Customers{% endblock %}
+{% block title %}Ajouter un client{% endblock %}
 
 {% block body %}
-    <h1>Create new Customers</h1>
+    <h1>Ajouter un client</h1>
 
-    {{ include('customers/_form.html.twig') }}
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.url_project) }}
+        {{ form_row(form.tags) }}
 
-    <a href="{{ path('app_customers_index') }}">back to list</a>
+        <h2>Images</h2>
+        <div id="images_container" data-prototype="{{ form_widget(form.images.vars.prototype)|e }}">
+            {% for imageForm in form.images %}
+                <div class="image-entry">
+                    {{ form_row(imageForm.image) }}
+                    {{ form_row(imageForm.Alt) }}
+                    {{ form_row(imageForm.Title) }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" id="add_image_button">Ajouter une image</button>
+
+        <button type="submit">Enregistrer</button>
+    {{ form_end(form) }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let collectionHolder = document.querySelector('#images_container');
+            let addButton = document.querySelector('#add_image_button');
+
+            // Récupérer le nombre actuel d'entrées dans la collection
+            let index = collectionHolder.children.length;
+
+            // Fonction pour ajouter un nouveau formulaire d'image
+            function addImageForm() {
+                // Récupérer le prototype de formulaire
+                let prototype = collectionHolder.dataset.prototype;
+
+                // Remplacer '__name__' dans le prototype par l'index actuel
+                let newForm = prototype.replace(/__name__/g, index);
+
+                // Incrémenter l'index pour le prochain élément
+                index++;
+
+                // Créer un élément div pour le nouveau formulaire
+                let newFormElement = document.createElement('div');
+                newFormElement.classList.add('image-entry');
+                newFormElement.innerHTML = newForm;
+
+                // Ajouter le nouveau formulaire au conteneur
+                collectionHolder.appendChild(newFormElement);
+            }
+
+            // Ajouter un gestionnaire d'événements au bouton d'ajout
+            addButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                addImageForm();
+            });
+        });
+    </script>
 {% endblock %}

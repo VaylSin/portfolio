@@ -30,19 +30,12 @@ class Project
     /**
      * @var Collection<int, Image>
      */
-    #[ORM\ManyToMany(targetEntity: Image::class, inversedBy: 'projects')]
-    private Collection $Images;
-
-    /**
-     * @var Collection<int, Image>
-     */
-    #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'Project')]
+    #[ORM\ManyToMany(targetEntity: Image::class)]
     private Collection $images;
 
     public function __construct()
     {
         $this->tags = new ArrayCollection();
-        $this->Images = new ArrayCollection();
         $this->images = new ArrayCollection();
     }
 
@@ -104,13 +97,13 @@ class Project
      */
     public function getImages(): Collection
     {
-        return $this->Images;
+        return $this->images;
     }
 
     public function addImage(Image $image): static
     {
-        if (!$this->Images->contains($image)) {
-            $this->Images->add($image);
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
         }
 
         return $this;
@@ -118,7 +111,7 @@ class Project
 
     public function removeImage(Image $image): static
     {
-        $this->Images->removeElement($image);
+        $this->images->removeElement($image);
 
         return $this;
     }

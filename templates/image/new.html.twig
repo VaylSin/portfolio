@@ -4,10 +4,7 @@
 
 {% block body %}
     <h1>Ajouter une image</h1>
+    {{ include('image/_form.html.twig', {'button_label': 'Envoyer'}) }}
+    <a href="{{ path('app_image_index') }}">Retour à la liste</a>
 
-    {{ form_start(form) }}
-        {{ form_row(form.file) }}
-        {{ form_row(form.alt) }}
-        <button class="btn">Ajouter</button>
-    {{ form_end(form) }}
 {% endblock %}
