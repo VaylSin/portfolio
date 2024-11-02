@@ -30,8 +30,7 @@ class CustomersController extends AbstractController {
     }
 
     #[Route('/new', name: 'app_customers_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SluggerInterface $slugger): Response
-    {
+    public function new(Request $request, SluggerInterface $slugger): Response {
         $customer = new Customers();
         $form = $this->createForm(CustomersType::class, $customer);
         $form->handleRequest($request);
