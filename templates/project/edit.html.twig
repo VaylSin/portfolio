@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le projet{% endblock %}
+
+{% block body %}
+    <h1>Modifier le projet</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.url) }}
+        {{ form_row(form.tags) }}
+
+        <h2>Images</h2>
+        <div id="images_container" data-prototype="{{ form_widget(form.images.vars.prototype)|e }}">
+            {% for imageForm in form.images %}
+                <div class="image-entry m-4">
+                    {% if imageForm.vars.value.url %}
+                        <img src="{{ asset(imageForm.vars.value.url) }}" alt="{{ imageForm.vars.value.alt }}" style="max-width: 200px;">
+                    {% endif %}
+                    {{ form_row(imageForm.image) }}
+                    {{ form_row(imageForm.alt) }}
+                    {{ form_row(imageForm.title) }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" id="add_image_button">Ajouter une image</button>
+
+        <button type="submit">Enregistrer</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_project_index') }}">Retour à la liste</a>
+{% endblock %}
