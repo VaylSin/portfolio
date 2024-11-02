@@ -3,12 +3,15 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Tag;
+use App\Entity\Page;
 use App\Entity\User;
 use App\Entity\Order;
 use App\Entity\Skills;
+use App\Entity\Contact;
 use App\Entity\Product;
 use App\Entity\Project;
 use App\Entity\Category;
+use App\Entity\Customers;
 use App\Entity\Testimonial;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,11 +21,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 class DashboardController extends AbstractDashboardController {
-    
+
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin', name: 'admin')]
-    public function index(): Response
-    {
+    public function index(): Response {
         // return parent::index();
         return $this->render('Admin/dashboard.html.twig');
 
@@ -49,33 +51,17 @@ class DashboardController extends AbstractDashboardController {
         return Dashboard::new()
             ->setTitle('SKDigit - Admin dashboard');
     }
+    public function configureMenuItems(): iterable {
 
-    // public function configureMenuItems(): iterable
-    // {
-    //     yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-    //     // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
-    // }
+        // yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::linkToCrud('Pages', 'fas fa-file', Page::class);
 
-        public function configureMenuItems(): iterable {
-
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::section('Catégories');
-        yield MenuItem::linkToCrud('Tag', 'fas fa-list', Tag::class);
-        yield MenuItem::section('Clients');
-        yield MenuItem::linkToCrud('Customers', 'fas fa-user', User::class);
-        yield MenuItem::section('Projets');
         yield MenuItem::linkToCrud('Project', 'fas fa-box', Project::class);
-        yield MenuItem::section('Témoignages');
+        yield MenuItem::linkToCrud('Customers', 'fas fa-user', Customers::class);
+        yield MenuItem::linkToCrud('Tag', 'fas fa-list', Tag::class);
         yield MenuItem::linkToCrud('Testimonial', 'fas fa-comment', Testimonial::class);
-        yield MenuItem::section('Skills');
         yield MenuItem::linkToCrud('Skills', 'fas fa-list', Skills::class);
-        yield MenuItem::section('Contact');
-
-        // yield MenuItem::section('Utilisateurs');
-        // yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-user', User::class);
-        // yield MenuItem::linkToCrud('Commandes', 'fas fa-user', Order::class);
-        // yield MenuItem::linkToCrud('Contact', 'fas fa-address-book', Contact::class);
-        // yield MenuItem::linkToCrud('Reservations', 'fas fa-book', Reservation::class);
-
+        yield MenuItem::linkToCrud('User', 'fas fa-user', User::class);
+        yield MenuItem::linkToCrud('Contact', 'fas fa-envelope', Contact::class);
     }
 }

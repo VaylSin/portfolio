@@ -15,11 +15,16 @@ class Project
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     private ?string $url = null;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    private $slug;
 
     /**
      * @var Collection<int, Tag>
@@ -37,6 +42,7 @@ class Project
     {
         $this->tags = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->slug = $this->name;
     }
 
     public function getId(): ?int
@@ -64,6 +70,18 @@ class Project
     public function setUrl(string $url): static
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+        public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

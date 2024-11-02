@@ -15,12 +15,16 @@ class Customers
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     private ?string $url_project = null;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    private $slug;
     /**
      * @var Collection<int, Tag>
      */
@@ -34,12 +38,11 @@ class Customers
     private Collection $images;
 
 
-
-
     public function __construct()
     {
         $this->tags = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->slug = $this->name;
     }
 
     public function getId(): ?int
@@ -115,6 +118,16 @@ class Customers
     public function removeImage(Image $image): static
     {
         $this->images->removeElement($image);
+
+        return $this;
+    }
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }
