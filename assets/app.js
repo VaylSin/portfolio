@@ -7,37 +7,47 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('Hello Webpack Encore! Edit me in assets/app.js, test webpack');
     let collectionHolder = document.querySelector('#images_container');
     let addButton = document.querySelector('#add_image_button');
 
-    // Récupérer le nombre actuel d'entrées dans la collection
     let index = collectionHolder.children.length;
 
-    // Fonction pour ajouter un nouveau formulaire d'image
     function addImageForm() {
-        // Récupérer le prototype de formulaire
+
         let prototype = collectionHolder.dataset.prototype;
-
-        // Remplacer '__name__' dans le prototype par l'index actuel
         let newForm = prototype.replace(/__name__/g, index);
-
-        // Incrémenter l'index pour le prochain élément
         index++;
-
-        // Créer un élément div pour le nouveau formulaire
         let newFormElement = document.createElement('div');
         newFormElement.classList.add('image-entry');
         newFormElement.innerHTML = newForm;
-
-        // Ajouter le nouveau formulaire au conteneur
         collectionHolder.appendChild(newFormElement);
-    }
 
-    // Ajouter un gestionnaire d'événements au bouton d'ajout
+    }
     addButton.addEventListener('click', function (e) {
+
         e.preventDefault();
         addImageForm();
+
     });
+
+    // gère la suppression des images dans le formulaire d'édition des pages en fonction des champs flexibles sélectionnés
+    const typeField = document.querySelector('[name$="[type]"]');
+    const contentFields = document.querySelectorAll('.block-content');
+    console.log(contentFields);
+
+    function toggleContentFields() {
+        const selectedType = typeField.value;
+        contentFields.forEach(field => {
+            if (field.classList.contains(`block-content-${selectedType}`)) {
+                field.style.display = '';
+            } else {
+                field.style.display = 'none';
+            }
+        });
+    }
+
+    typeField.addEventListener('change', toggleContentFields);
+    toggleContentFields(); // Initial call to set the correct fields on page load
 });

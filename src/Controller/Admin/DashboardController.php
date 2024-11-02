@@ -49,13 +49,13 @@ class DashboardController extends AbstractDashboardController {
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('SKDigit - Admin dashboard');
+            ->setTitle('SKDigit dashboard');
     }
     public function configureMenuItems(): iterable {
 
         // yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::linkToUrl('Aller sur le site', 'fas fa-home', '/');
         yield MenuItem::linkToCrud('Pages', 'fas fa-file', Page::class);
-
         yield MenuItem::linkToCrud('Project', 'fas fa-box', Project::class);
         yield MenuItem::linkToCrud('Customers', 'fas fa-user', Customers::class);
         yield MenuItem::linkToCrud('Tag', 'fas fa-list', Tag::class);
