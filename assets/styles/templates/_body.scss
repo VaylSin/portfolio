@@ -1,0 +1,37 @@
+@import '../variables';
+@import '../mixins';
+
+body {
+    background-color: $main-color;
+    font-family: $font-main;
+}
+
+.block-content {
+    display: none;
+}
+.d-flex-r {
+	display: flex;
+	flex-direction: row;
+	@media screen and (max-width: 768px) {
+		flex-direction: column;
+	}
+}
+.d-flex-c {
+	display: flex;
+	flex-direction: column;
+}
+.d-none-desktop {
+	display: block ;
+	@media screen and (min-width: 768px) {
+		display: none;
+	}
+}
+.d-none-mobile {
+	display: none;
+	@media screen and (min-width: 768px) {
+		display: block !important;
+	}
+}
+
+@include container-widths;
+@include responsive-grid(12);

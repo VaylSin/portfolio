@@ -1,0 +1,153 @@
+// Define grid breakpoints
+@import 'variables';
+
+// Mixin for columns
+@mixin make-col($size) {
+    flex: 0 0 percentage($size / $grid-columns);
+    max-width: percentage($size / $grid-columns);
+    padding: 0 $gutter-width / 2;
+}
+
+// Mixin for row
+@mixin make-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -$gutter-width / 2;
+    margin-left: -$gutter-width / 2;
+}
+// Mixin for container widths
+@mixin container-widths {
+    @each $breakpoint, $width in $container-max-widths {
+        .container-#{$breakpoint} {
+            max-width: $width;
+            margin-right: auto;
+            margin-left: auto;
+            padding-right: $gutter-width / 2;
+            padding-left: $gutter-width / 2;
+        }
+    }
+}
+// Mixin for responsive grid
+@mixin responsive-grid($columns) {
+    .row {
+        @include make-row;
+    }
+
+    @each $breakpoint, $width in $grid-breakpoints {
+        @media (min-width: $width) {
+            @for $i from 1 through $columns {
+                .col-#{$breakpoint}-#{$i} {
+                    @include make-col($i);
+                }
+            }
+        }
+    }
+
+    @for $i from 1 through $columns {
+        .col-#{$i} {
+            @include make-col($i);
+        }
+    }
+}
+
+// Fonction pour calculer la taille de police en vw
+@function calculateFontSize($targetSize, $baseSize: $default-font-size) {
+  @return ($targetSize / $baseSize) * 1vw;
+}
+
+// Mixin pour générer les règles de taille de police responsive
+@mixin responsiveFontSize($targetSize) {
+    font-size: calculateFontSize($targetSize);
+
+    @each $breakpoint, $min-width in $breakpoints {
+        @media (min-width: $min-width) {
+        font-size: calculateFontSize($targetSize);
+        }
+    }
+}
+// .my-class {
+//     @include responsiveFontSize(16px);
+// }
+
+@for $i from 1 through 5 {
+	.gap-#{$i} {
+		gap: $i * 1rem;
+		@media screen and (max-width: 768px) {
+			gap: 1rem;
+		}
+	}
+}
+
+@each $prefix in $margin_prefixes {
+    @for $i from 1 through length($margin-sizes) {
+        .#{$prefix}-#{nth($margin-sizes, $i)} {
+            @if $prefix == 'mx' or $prefix == 'my' {
+                margin-#{if($prefix == 'mx', 'top', 'left')}: (nth($margin-sizes, $i) / 2) * 1rem;
+                margin-#{if($prefix == 'my', 'right', 'bottom')}: (nth($margin-sizes, $i) / 2) * 1rem;
+            }
+            @else if $prefix == 'm' {
+                margin: (nth($margin-sizes, $i) / 2) * 1rem;
+            }
+            @else {
+                @each $direction in $directions {
+                    @if $prefix == 'm' + str-slice($direction, 1, 1) {
+                        margin-#{$direction}: (nth($margin-sizes, $i) / 2) * 1rem;
+                    }
+                }
+            }
+        }
+    }
+}
+@each $prefix in $padding_prefixes {
+    @for $i from 1 through length($padding-sizes) {
+        .#{$prefix}-#{nth($padding-sizes, $i)} {
+            @if $prefix == 'mx' or $prefix == 'my' {
+                padding-#{if($prefix == 'mx', 'top', 'left')}: (nth($padding-sizes, $i) / 2) * 1rem;
+                padding-#{if($prefix == 'my', 'right', 'bottom')}: (nth($padding-sizes, $i) / 2) * 1rem;
+            }
+            @else if $prefix == 'm' {
+                padding: (nth($padding-sizes, $i) / 2) * 1rem;
+            }
+            @else {
+                @each $direction in $directions {
+                    @if $prefix == 'm' + str-slice($direction, 1, 1) {
+                        padding-#{$direction}: (nth($padding-sizes, $i) / 2) * 1rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Gestion de align-items
+@each $value in $align-items-values {
+	.align-items-#{$value} {
+		align-items: $value;
+	}
+}
+
+// Gestion de justify-content
+@each $value in $justify-content-values {
+	.content-#{$value} {
+		justify-content: #{$value} ;
+	}
+}
+
+// gestion des text-align
+@each $value in $typo {
+    .text-#{$value} {
+        text-align: $value;
+    }
+}
+// gestion des text-transform
+@each $value in $textTransform {
+    .text-#{$value} {
+        text-transform: $value;
+    }
+}
+// gestion des positions
+@each $value in $position {
+    .position-#{$value} {
+        position: $value;
+    }
+}
